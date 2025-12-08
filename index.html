@@ -4,459 +4,248 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadoras Humanas | NASA</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Space+Grotesk:wght@300;500;700&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
     
-    <style>
-        /* --- 1. VARIABLES Y CONFIGURACIÓN --- */
-        :root {
-            /* Paleta Ghibli/Vintage */
-            --bg-deep: #0D160F;       /* Negro verdoso (Espacio profundo) */
-            --bg-hero: #1A291E;       /* Verde Pizarra */
-            --bg-cream: #F2F0E4;      /* Papel antiguo */
-            --bg-paper: #E8E6D9;      /* Contraste ligero */
-            --primary-green: #2E4631; /* Verde texto */
-            --gold: #D4AF37;          /* Dorado elegante */
-            --gold-light: #F0E68C;
-            --text-light: #F2F0E4;
-            --text-dark: #1A1F1B;
-        }
-
-        html { scroll-behavior: smooth; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--bg-cream);
-            color: var(--text-dark);
-            font-family: 'Lora', serif;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* --- 2. HEADER INTELIGENTE --- */
-        /* Empieza transparente y flotando */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 2rem 5%;
-            z-index: 1000;
-            transition: all 0.4s ease;
-        }
-
-        /* Estado cuando bajas el scroll (Sticky & Cream) */
-        header.scrolled {
-            background-color: rgba(242, 240, 228, 0.95);
-            padding: 1rem 5%;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-
-        .logo {
-            font-family: 'Cinzel', serif;
-            color: var(--text-light); /* Blanco al inicio */
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 700;
-            transition: color 0.4s;
-        }
-        
-        header.scrolled .logo { color: var(--primary-green); }
-
-        nav ul { display: flex; gap: 2.5rem; list-style: none; }
-
-        nav a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: color 0.3s;
-            position: relative;
-        }
-
-        nav a:hover { color: var(--gold); }
-        
-        /* Ajuste de color de enlaces al hacer scroll */
-        header.scrolled nav a { color: var(--text-dark); }
-        header.scrolled nav a:hover { color: var(--primary-green); }
-
-        /* --- 3. HERO SECTION (ESTILO GHIBLI) --- */
-        .ghibli-hero {
-            height: 100vh;
-            width: 100%;
-            /* Degradado atmosférico */
-            background: radial-gradient(circle at 30% 40%, var(--bg-hero) 0%, var(--bg-deep) 90%);
-            position: relative;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            padding: 0 5%;
-        }
-
-        /* Canvas de partículas */
-        #math-stars {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 10;
-            width: 50%;
-            color: var(--text-light);
-            margin-top: 40px;
-        }
-
-        .subtitle {
-            display: block;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.85rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--gold);
-            margin-bottom: 1rem;
-            opacity: 0;
-            animation: fadeIn 1s ease forwards 0.5s;
-        }
-
-        .hero-title {
-            font-family: 'Cinzel', serif;
-            font-size: 4.5rem; /* Título gigante */
-            line-height: 1;
-            font-weight: 400;
-            margin-bottom: 2rem;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            opacity: 0;
-            animation: fadeIn 1s ease forwards 0.8s;
-        }
-
-        .hero-desc {
-            font-size: 1.1rem;
-            opacity: 0.8;
-            max-width: 480px;
-            margin-bottom: 3rem;
-            border-left: 2px solid var(--gold);
-            padding-left: 1.5rem;
-            opacity: 0;
-            animation: fadeIn 1s ease forwards 1.1s;
-        }
-
-        .magic-btn {
-            display: inline-block;
-            background-color: var(--gold-light);
-            color: var(--bg-deep);
-            font-family: 'Space Grotesk', sans-serif;
-            padding: 1rem 2.5rem;
-            font-weight: 700;
-            text-decoration: none;
-            border-radius: 2px;
-            letter-spacing: 1px;
-            transition: all 0.3s;
-            opacity: 0;
-            animation: fadeIn 1s ease forwards 1.4s;
-        }
-
-        .magic-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 20px rgba(240, 230, 140, 0.4);
-            background: white;
-        }
-
-        /* Imagen Hero Integrada */
-        .hero-visual {
-            position: absolute;
-            right: 0;
-            bottom: 0;
-            width: 55%;
-            height: 90%;
-            z-index: 5;
-            display: flex;
-            align-items: flex-end;
-            justify-content: flex-end;
-            pointer-events: none;
-        }
-
-        .character-img {
-            max-width: 100%;
-            height: auto;
-            max-height: 95vh;
-            /* Máscara mágica para fundir la imagen */
-            -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%), 
-                                linear-gradient(to left, black 40%, transparent 100%);
-            mask-image: linear-gradient(105deg, black 60%, transparent 90%);
-            filter: sepia(0.2) contrast(1.1) brightness(0.9);
-            transform: translateX(50px);
-            opacity: 0;
-            animation: floatImage 2s ease-out forwards 0.5s;
-        }
-
-        /* Círculos decorativos de fondo */
-        .orbit-circle {
-            position: absolute;
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 50%;
-            z-index: 2;
-        }
-        .orbit-1 { width: 700px; height: 700px; right: -150px; top: -150px; animation: spin 60s linear infinite; }
-        .orbit-2 { width: 900px; height: 900px; right: -250px; bottom: -250px; border-color: rgba(212, 175, 55, 0.1); animation: spin 80s linear infinite reverse; }
-
-
-        /* --- 4. SECCIONES DE CONTENIDO (TIMELINE, CARRUSEL) --- */
-        
-        /* Animaciones Scroll Reveal */
-        .reveal {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.8s ease-out;
-        }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-
-        /* Títulos de sección */
-        .section-header { text-align: center; margin-bottom: 4rem; padding-top: 2rem;}
-        .section-header h2 { 
-            font-family: 'Cinzel', serif; 
-            font-size: 3rem; 
-            color: var(--primary-green); 
-            margin-bottom: 1rem; 
-        }
-
-        /* Timeline Styles */
-        .history-section { padding: 6rem 5%; background-color: var(--bg-cream); }
-        .timeline { position: relative; max-width: 800px; margin: 0 auto; }
-        .timeline::before {
-            content: ''; position: absolute; left: 50%; width: 2px; height: 100%;
-            background: rgba(46, 70, 49, 0.2); transform: translateX(-50%);
-        }
-        .timeline-item {
-            display: flex; justify-content: flex-end; padding-right: 50px;
-            position: relative; margin-bottom: 3rem; width: 50%;
-        }
-        .timeline-item:nth-child(even) {
-            align-self: flex-end; justify-content: flex-start;
-            padding-right: 0; padding-left: 50px; margin-left: 50%;
-        }
-        .timeline-item::after {
-            content: ''; position: absolute; width: 16px; height: 16px;
-            background: var(--primary-green); border: 4px solid var(--bg-cream);
-            border-radius: 50%; top: 5px; right: -10px; z-index: 2;
-        }
-        .timeline-item:nth-child(even)::after { right: auto; left: -10px; }
-        
-        .t-content {
-            background: white; padding: 2rem; border-radius: 4px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-top: 3px solid var(--gold);
-        }
-
-        /* Carrusel Styles */
-        .carousel-section { padding: 6rem 5%; background-color: var(--bg-paper); }
-        .carousel-wrapper {
-            position: relative; max-width: 1000px; margin: 0 auto;
-            border-radius: 4px; overflow: hidden;
-            box-shadow: 0 20px 50px rgba(46, 70, 49, 0.15);
-            background: white;
-        }
-        .slides-container { display: flex; transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
-        .slide { min-width: 100%; display: grid; grid-template-columns: 45% 55%; }
-        .slide-img { width: 100%; height: 500px; object-fit: cover; filter: grayscale(100%); transition: filter 0.5s; }
-        .slide:hover .slide-img { filter: grayscale(0%); }
-        .slide-info { padding: 4rem; display: flex; flex-direction: column; justify-content: center; }
-        .slide-info h3 { font-family: 'Cinzel', serif; font-size: 2rem; color: var(--primary-green); margin-bottom: 0.5rem; }
-        .c-btn {
-            position: absolute; bottom: 2rem; right: 2rem; width: 50px; height: 50px;
-            border: 1px solid var(--primary-green); background: transparent;
-            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;
-        }
-        .c-btn:hover { background: var(--primary-green); color: white; }
-        .prev-btn { right: 80px; }
-
-        /* Misiones Styles */
-        .missions-section {
-            padding: 6rem 5%;
-            background-color: var(--bg-deep);
-            color: white;
-            position: relative;
-        }
-        .mission-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem; position: relative; z-index: 2;
-        }
-        .mission-card {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            padding: 2.5rem; transition: 0.3s;
-        }
-        .mission-card:hover { border-color: var(--gold); transform: translateY(-5px); }
-
-        /* Footer */
-        footer {
-            background-color: #000; color: #666; padding: 3rem 5%;
-            text-align: center; font-size: 0.9rem;
-        }
-
-        /* Keyframes */
-        @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes floatImage { from { transform: translateX(80px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-title { font-size: 3rem; }
-            .ghibli-hero { flex-direction: column; justify-content: center; padding-top: 100px; text-align: center; }
-            .hero-content { width: 100%; margin-top: 0; }
-            .hero-desc { margin: 0 auto 2rem; border: none; padding: 0; }
-            .hero-visual { position: relative; width: 100%; height: 400px; justify-content: center; opacity: 0.8; }
-            .timeline::before { left: 20px; }
-            .timeline-item { width: 100%; padding-left: 50px; padding-right: 0; margin-left: 0; text-align: left; }
-            .timeline-item:nth-child(even) { margin-left: 0; }
-            .timeline-item::after, .timeline-item:nth-child(even)::after { left: 12px; }
-            .slide { grid-template-columns: 1fr; }
-            .slide-img { height: 250px; }
-            .slide-info { padding: 2rem; }
-        }
-
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    
 </head>
-<body>
+<body data-bs-spy="scroll" data-bs-target="#mainNavbar" data-bs-offset="100">
 
-    <header id="navbar">
-        <div class="logo">NASA'S COMPUTERS</div>
-        <nav>
-            <ul>
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#historia">Historia</a></li>
-                <li><a href="#perfiles">Perfiles</a></li>
-                <li><a href="#misiones">Misiones</a></li>
-            </ul>
-        </nav>
-    </header>
+    <nav class="navbar navbar-expand-lg fixed-top" id="mainNavbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">NASA'S COMPUTERS</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav gap-4">
+                    <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#historia">Historia</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#perfiles">Perfiles</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#misiones">Misiones</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-    <section class="ghibli-hero" id="inicio">
+    <section class="first-section d-flex align-items-center" id="inicio">
         <canvas id="math-stars"></canvas>
         <div class="orbit-circle orbit-1"></div>
         <div class="orbit-circle orbit-2"></div>
 
-        <div class="hero-content">
-            <span class="subtitle">• 1935 &mdash; 1969 •</span>
-            <h1 class="hero-title">FIGURES<br>IN THE STARS</h1>
-            <p class="hero-desc">
-                Antes de los circuitos de silicio, el viaje a la Luna fue impulsado por la mente humana. La historia no contada de las mujeres que calcularon lo imposible.
-            </p>
-            <a href="#historia" class="magic-btn">DESCUBRIR HISTORIA</a>
-        </div>
-
-        <div class="hero-visual">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6d/Katherine_Johnson_1983.jpg" alt="Katherine Johnson" class="character-img">
+        <div class="container position-relative" style="z-index: 10;">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <span class="first-section-subtitle d-block mb-3 reveal">• 1935 &mdash; 1969 •</span>
+                    <h1 class="first-section-title mb-4 reveal">FIGURES<br>IN THE STARS</h1>
+                    <p class="first-section-desc lead mb-5 reveal">
+                        Antes de los circuitos de silicio, el viaje a la Luna fue impulsado por la mente humana. La historia no contada de las mujeres que calcularon lo imposible.
+                    </p>
+                    <a href="#historia" class="btn btn-principal reveal">DESCUBRIR HISTORIA</a>
+                </div>
+                <div class="col-lg-6 text-end first-section-visual reveal">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6d/Katherine_Johnson_1983.jpg" alt="Katherine Johnson" class="img-personaje img-fluid">
+                </div>
+            </div>
         </div>
     </section>
 
     <section class="history-section" id="historia">
-        <div class="section-header reveal">
-            <h2>El Camino a las Estrellas</h2>
-            <p>De la segregación a la órbita terrestre.</p>
-        </div>
+        <div class="container position-relative">
+            <div class="d-none d-md-block timeline-line"></div>
 
-        <div class="timeline">
-            <div class="timeline-item reveal">
-                <div class="t-content">
-                    <span style="color:var(--gold); font-weight:700;">1935</span>
-                    <h4 style="font-family:'Space Grotesk'">Computadoras Humanas</h4>
-                    <p>La NACA comienza a contratar mujeres para procesar datos de pruebas de túneles de viento.</p>
+            <div class="row mb-5 justify-content-center align-items-center reveal">
+                <div class="col-md-5 left-side position-relative">
+                    <div class="timeline-card text-end interactive-card" data-bs-toggle="modal" data-bs-target="#infoModal" data-timeline="event-1935">
+                        <div class="timeline-dot d-none d-md-block"></div>
+                        <span style="color:#D4AF37; font-weight:700;">1935</span>
+                        <h4>Computadoras Humanas</h4>
+                        <p>La NACA comienza a contratar mujeres para procesar datos de pruebas de túneles de viento.</p>
+                    </div>
+                </div>
+                <div class="col-md-5 offset-md-1 timeline-col">
+                    <div class="timeline-img-wrapper interactive-card" data-bs-toggle="modal" data-bs-target="#infoModal" data-timeline="event-1935">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/0/06/Human_computers_-_Dryden.jpg" alt="Mujeres trabajando como computadoras en NACA" class="img-fluid timeline-img">
+                    </div>
                 </div>
             </div>
-            <div class="timeline-item reveal">
-                <div class="t-content">
-                    <span style="color:var(--gold); font-weight:700;">1943</span>
-                    <h4 style="font-family:'Space Grotesk'">West Area Computers</h4>
-                    <p>Durante la WWII, se establece un grupo segregado de matemáticas afroamericanas brillantes.</p>
+
+            <div class="row mb-5 justify-content-center align-items-center reveal">
+                <div class="col-md-5 timeline-col">
+                    <div class="timeline-img-wrapper interactive-card" data-bs-toggle="modal" data-bs-target="#infoModal" data-timeline="event-1943">
+                        <img src="https://th.bing.com/th/id/R.213ba4886d14a3a85db952e85e9b4596?rik=EW%2bPmp9I726zQA&riu=http%3a%2f%2fwww.jpl.nasa.gov%2fedu%2fimages%2fnews%2fcomputers.jpg&ehk=pb%2b1mjQwSlmb6AMwQBL6pRWNul74xxU34isc03zqL10%3d&risl=&pid=ImgRaw&r=0" alt="West Area Computers group" class="img-fluid timeline-img">
+                    </div>
+                </div>
+                <div class="col-md-5 offset-md-1 right-side position-relative timeline-col">
+                    <div class="timeline-dot d-none d-md-block"></div>
+                    <div class="timeline-card interactive-card" data-bs-toggle="modal" data-bs-target="#infoModal" data-timeline="event-1943">
+                        <span style="color:#D4AF37; font-weight:700;">1943</span>
+                        <h4>West Area Computers</h4>
+                        <p>Durante la WWII, se establece un grupo segregado de matemáticas afroamericanas brillantes.</p>
+                    </div>
                 </div>
             </div>
-            <div class="timeline-item reveal">
-                <div class="t-content">
-                    <span style="color:var(--gold); font-weight:700;">1962</span>
-                    <h4 style="font-family:'Space Grotesk'">La Órbita de Glenn</h4>
-                    <p>John Glenn exige que Katherine Johnson verifique manualmente los números de la IBM antes de volar.</p>
+
+            <div class="row justify-content-center align-items-center reveal">
+                <div class="col-md-5 left-side position-relative">
+                    <div class="timeline-dot d-none d-md-block"></div>
+                    <div class="timeline-card text-end interactive-card" data-bs-toggle="modal" data-bs-target="#infoModal" data-timeline="event-1962">
+                        <span style="color:#D4AF37; font-weight:700;">1962</span>
+                        <h4>La Órbita de Glenn</h4>
+                        <p>John Glenn exige que Katherine Johnson verifique manualmente los números de la IBM antes de volar.</p>
+                    </div>
+                </div>
+                <div class="col-md-5 offset-md-1 timeline-col">
+                    <div class="timeline-img-wrapper interactive-card" data-bs-toggle="modal" data-bs-target="#infoModal" data-timeline="event-1962">
+                        <img src="https://s.france24.com/media/display/f73a4906-090d-11e9-8adb-005056bff430/w:1024/p:16x9/glenn-john-astronaute-americain.jpeg" alt="Katherine Johnson en su escritorio" class="img-fluid timeline-img">
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <section class="carousel-section" id="perfiles">
-        <div class="section-header reveal">
-            <h2>Mentes Brillantes</h2>
-        </div>
-        <div class="carousel-wrapper reveal">
-            <div class="slides-container" id="track">
-                <div class="slide">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Katherine_Johnson_at_NASA_Langley.jpg" class="slide-img" alt="K. Johnson">
-                    <div class="slide-info">
-                        <h3>Katherine Johnson</h3>
-                        <p style="color: #666; margin-bottom: 1rem;">Mecánica Orbital</p>
-                        <p>"Simplemente hacía los cálculos. Me gustaba trabajar. Y cuando trabajas en lo que amas, no es trabajo."</p>
-                    </div>
-                </div>
-                <div class="slide">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Dorothy_Vaughan.jpg" class="slide-img" alt="D. Vaughan">
-                    <div class="slide-info">
-                        <h3>Dorothy Vaughan</h3>
-                        <p style="color: #666; margin-bottom: 1rem;">Programación FORTRAN</p>
-                        <p>Primera supervisora negra de la NACA. Vio el futuro en las computadoras digitales y se enseñó a sí misma para no quedarse atrás.</p>
-                    </div>
-                </div>
-                <div class="slide">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Mary_Jackson_working.jpg" class="slide-img" alt="M. Jackson">
-                    <div class="slide-info">
-                        <h3>Mary Jackson</h3>
-                        <p style="color: #666; margin-bottom: 1rem;">Ingeniería Aeronáutica</p>
-                        <p>Luchó en los tribunales para estudiar en una escuela de blancos y convertirse en la primera ingeniera afroamericana de la NASA.</p>
-                    </div>
-                </div>
+        <div class="container reveal">
+            <div class="text-center mb-5">
+                <h2 style="color: #2E4631; font-size: 3rem;">Mentes Brillantes</h2>
             </div>
-            <button class="c-btn prev-btn" id="prevBtn">&#8592;</button>
-            <button class="c-btn next-btn" id="nextBtn">&#8594;</button>
+
+            <div id="profilesCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-indicators">
+                    <button type="button" data-bs-target="#profilesCarousel" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#profilesCarousel" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#profilesCarousel" data-bs-slide-to="2"></button>
+                </div>
+                
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="row g-0">
+                            <div class="col-md-5 carousel-img-wrapper">
+                                <img src="https://observer.com/wp-content/uploads/sites/2/2020/02/Katherine_Johnson_at_NASA_in_1966-e1582560991459.jpg?quality=80&strip" class="d-block w-100" alt="Katherine Johnson">
+                            </div>
+                            <div class="col-md-7 d-flex align-items-center p-5">
+                                <div>
+                                    <h3 style="color: #2E4631;">Katherine Johnson</h3>
+                                    <p class="text-muted mb-3">Mecánica Orbital</p>
+                                    <p class="lead fs-6">"Simplemente hacía los cálculos. Me gustaba trabajar. Y cuando trabajas en lo que amas, no es trabajo."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="row g-0">
+                            <div class="col-md-5 carousel-img-wrapper">
+                                <img src="https://samepassage.org/wp-content/uploads/2021/03/Dorothy-Vaughan-585x385.png" class="d-block w-100" alt="Dorothy Vaughan">
+                            </div>
+                            <div class="col-md-7 d-flex align-items-center p-5">
+                                <div>
+                                    <h3 style="color: #2E4631;">Dorothy Vaughan</h3>
+                                    <p class="text-muted mb-3">Programación FORTRAN</p>
+                                    <p class="lead fs-6">Primera supervisora negra de la NACA. Vio el futuro en las computadoras digitales y se enseñó a sí misma para no quedarse atrás.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="carousel-item">
+                        <div class="row g-0">
+                            <div class="col-md-5 carousel-img-wrapper">
+                                <img src="https://i.pinimg.com/736x/b0/4c/1d/b04c1d94a77ce0acc207606b03a1222f.jpg" class="d-block w-100" alt="Mary Jackson">
+                            </div>
+                            <div class="col-md-7 d-flex align-items-center p-5">
+                                <div>
+                                    <h3 style="color: #2E4631;">Mary Jackson</h3>
+                                    <p class="text-muted mb-3">Ingeniería Aeronáutica</p>
+                                    <p class="lead fs-6">Luchó en los tribunales para estudiar en una escuela de blancos y convertirse en la primera ingeniera afroamericana de la NASA.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="carousel-control-prev" type="button" data-bs-target="#profilesCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#profilesCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
+                </button>
+            </div>
         </div>
     </section>
 
     <section class="missions-section" id="misiones">
-        <div class="section-header reveal" style="color: white;">
-            <h2 style="color: white">Impacto Global</h2>
-            <p style="color: rgba(255,255,255,0.6)">Más allá de los números</p>
+        <div class="container text-center mb-5 reveal">
+            <h2>Impacto Global</h2>
+            <p class="opacity-75">Más allá de los números</p>
         </div>
-        <div class="mission-grid">
-            <div class="mission-card reveal">
-                <div style="font-size:2rem; margin-bottom:1rem">🚀</div>
-                <h4>Proyecto Mercury</h4>
-                <p style="font-size:0.9rem; opacity:0.7">Los primeros pasos de América en el espacio, calculados a mano.</p>
-            </div>
-            <div class="mission-card reveal">
-                <div style="font-size:2rem; margin-bottom:1rem">🌕</div>
-                <h4>Apolo 11</h4>
-                <p style="font-size:0.9rem; opacity:0.7">Sincronización lunar crítica. Sin margen de error.</p>
-            </div>
-            <div class="mission-card reveal">
-                <div style="font-size:2rem; margin-bottom:1rem">✈️</div>
-                <h4>Supersónico</h4>
-                <p style="font-size:0.9rem; opacity:0.7">Investigación sobre el boom sónico y aerodinámica avanzada.</p>
+        
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4 reveal">
+                    <div class="card mission-card h-100 p-4 text-white" data-bs-toggle="modal" data-bs-target="#infoModal" data-mission="mercury">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3">🚀</div>
+                            <h4 class="card-title">Proyecto Mercury</h4>
+                            <p class="card-text opacity-75">Los primeros pasos de América en el espacio, calculados a mano.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 reveal">
+                    <div class="card mission-card h-100 p-4 text-white" data-bs-toggle="modal" data-bs-target="#infoModal" data-mission="apolo">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3">🌕</div>
+                            <h4 class="card-title">Apolo 11</h4>
+                            <p class="card-text opacity-75">Sincronización lunar crítica. Sin margen de error.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 reveal">
+                    <div class="card mission-card h-100 p-4 text-white" data-bs-toggle="modal" data-bs-target="#infoModal" data-mission="supersonic">
+                        <div class="card-body text-center">
+                            <div class="display-4 mb-3">✈️</div>
+                            <h4 class="card-title">Supersónico</h4>
+                            <p class="card-text opacity-75">Investigación sobre el boom sónico y aerodinámica avanzada.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer>
-        <p>&copy; 2025 Homenaje Educativo. Diseño inspirado en la historia real y la estética cinematográfica.</p>
+    <footer class="bg-black text-secondary text-center py-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Homenaje Educativo. Diseño con Bootstrap 5.</p>
+        </div>
     </footer>
 
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content p-4">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <span id="modalIcon" class="display-1 d-block mb-3"></span>
+                    <h3 id="modalTitle" class="mb-4" style="color: #D4AF37;"></h3>
+                    <p id="modalDesc" class="lead"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        // A. SISTEMA DE PARTÍCULAS (MATH DUST)
         const canvas = document.getElementById('math-stars');
         const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
+        let width, height, particles = [];
         const symbols = ['+', '×', '∫', 'π', '∑', '√', 'dx', 'y', 'φ', '.', '{', '}'];
+
+        
 
         function resize() {
             width = canvas.width = window.innerWidth;
@@ -499,7 +288,6 @@
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update();
                 particles[i].draw();
-                // Conexiones
                 for (let j = i; j < particles.length; j++) {
                     const dx = particles[i].x - particles[j].x;
                     const dy = particles[i].y - particles[j].y;
@@ -518,20 +306,20 @@
         window.addEventListener('resize', () => { resize(); initParticles(); });
         resize(); initParticles(); animateParticles();
 
-
-        // B. SCROLL REVEAL & NAVBAR
-        const navbar = document.getElementById('navbar');
+        const navbar = document.getElementById('mainNavbar');
         const reveals = document.querySelectorAll('.reveal');
 
         window.addEventListener('scroll', () => {
-            // Navbar cambio de color
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
+                navbar.classList.remove('navbar-dark'); 
+                navbar.classList.add('navbar-light');
             } else {
                 navbar.classList.remove('scrolled');
+                navbar.classList.add('navbar-dark');
+                navbar.classList.remove('navbar-light');
             }
 
-            // Revelar elementos
             const windowHeight = window.innerHeight;
             const elementVisible = 100;
             reveals.forEach((reveal) => {
@@ -542,30 +330,68 @@
             });
         });
 
+        window.dispatchEvent(new Event('scroll'));
 
-        // C. CARRUSEL LOGIC
-        const track = document.getElementById('track');
-        const slides = document.querySelectorAll('.slide');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        let index = 0;
+        const missionData = {
+            mercury: {
+                icon: "🚀",
+                title: "Proyecto Mercury & Freedom 7",
+                desc: "Katherine Johnson realizó el análisis de trayectoria para el vuelo de Alan Shepard, el primer estadounidense en el espacio. Más tarde, para la misión orbital de John Glenn, a pesar de que la NASA usaba computadoras electrónicas por primera vez, Glenn pidió específicamente a Johnson que verificara los cálculos a mano antes de despegar."
+            },
+            apolo: {
+                icon: "🌕",
+                title: "La Misión Apolo 11",
+                desc: "La precisión matemática era de vida o muerte. Johnson ayudó a sincronizar el Módulo Lunar con el Módulo de Comando en órbita. Dorothy Vaughan, por su parte, ya había preparado a la división de computación para usar máquinas IBM, asegurando que los datos complejos de reentrada fueran procesados a tiempo."
+            },
+            supersonic: {
+                icon: "✈️",
+                title: "Investigación Supersónica",
+                desc: "Mary Jackson trabajó en el Túnel de Presión Supersónico. Sus cálculos y experimentos sobre la capa límite y las fuerzas aerodinámicas ayudaron a entender cómo el aire se comporta a velocidades superiores a la del sonido, conocimientos cruciales para el diseño de aviones modernos y cohetes."
+            }
+        };
 
-        function updateSlide() {
-            track.style.transform = `translateX(-${index * 100}%)`;
-        }
+        const timelineData = {
+            'event-1935': {
+                icon: "♀️", 
+                title: "El Inicio de la Computación Humana",
+                desc: "La NACA (precursora de la NASA) comenzó a contratar mujeres para realizar los miles de cálculos necesarios para procesar los datos de las pruebas de túneles de viento. Inicialmente, estas mujeres, a menudo con títulos avanzados en matemáticas, eran consideradas un recurso más económico y eficiente que los hombres."
+            },
+            'event-1943': {
+                icon: "⭐", 
+                title: "West Area Computers: Rompiendo Barreras",
+                desc: "Debido a las leyes de segregación de Virginia, las matemáticas afroamericanas fueron asignadas a una unidad separada conocida como 'West Area Computers'. A pesar de la segregación y las restricciones, este grupo, liderado por Dorothy Vaughan, se convirtió en un pilar fundamental en el esfuerzo bélico y en la carrera espacial, luchando constantemente por la igualdad y el reconocimiento."
+            },
+            'event-1962': {
+                icon: "🛰️", 
+                title: "La Verificación de John Glenn",
+                desc: "Antes de su histórico vuelo, el astronauta John Glenn desconfió de los resultados generados por la nueva computadora IBM. Exigió que la 'chica' (Katherine Johnson) verificara manualmente las complejas ecuaciones orbitales a mano, una de las mayores pruebas de su habilidad y de la confianza que los astronautas tenían en el trabajo de las calculadoras humanas."
+            }
+        };
 
-        nextBtn.addEventListener('click', () => {
-            index++;
-            if (index >= slides.length) index = 0;
-            updateSlide();
-        });
+        const infoModal = document.getElementById('infoModal');
+        
+        infoModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const timelineType = button.getAttribute('data-timeline');
+            const missionType = button.getAttribute('data-mission');
+            let data;
 
-        prevBtn.addEventListener('click', () => {
-            index--;
-            if (index < 0) index = slides.length - 1;
-            updateSlide();
-        });
+            if (timelineType) {
+                data = timelineData[timelineType];
+            } else if (missionType) {
+                data = missionData[missionType];
+            }
 
+            if(data) {
+                const modalIcon = infoModal.querySelector('#modalIcon');
+                const modalTitle = infoModal.querySelector('#modalTitle');
+                const modalDesc = infoModal.querySelector('#modalDesc');
+
+                modalIcon.textContent = data.icon;
+                modalTitle.textContent = data.title;
+                modalDesc.textContent = data.desc;
+            }
+                });
     </script>
 </body>
 </html>
