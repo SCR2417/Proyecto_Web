@@ -191,6 +191,7 @@ h4, h5, h6, .nav-link, .btn { font-family: 'Space Grotesk', sans-serif; }
 }
 
 .missions-section {
+    min-height: 100vh; /* Se agregó para ocupar toda la altura de la pantalla */
     padding: 6rem 0;
     background-color: #0D160F;
     color: white;
@@ -199,6 +200,7 @@ h4, h5, h6, .nav-link, .btn { font-family: 'Space Grotesk', sans-serif; }
 .mission-card {
     background: rgba(255,255,255,0.03); 
     border: 1px solid rgba(255,255,255,0.1);
+    margin-top: 60px;
     transition: 0.3s;
     cursor: pointer;
     height: 100%;
