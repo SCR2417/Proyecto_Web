@@ -212,6 +212,10 @@ h4, h5, h6, .nav-link, .btn { font-family: 'Space Grotesk', sans-serif; }
 }
 
 
+.homenajes-section {
+    padding: 6rem 0 !important; /* Aseguramos que se vea igual que el carrusel */
+}
+
 /* Estilos del acordeón */
 .accordion-item {
     background-color: transparent;
