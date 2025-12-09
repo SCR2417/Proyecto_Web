@@ -209,6 +209,35 @@ h4, h5, h6, .nav-link, .btn { font-family: 'Space Grotesk', sans-serif; }
     background: rgba(255,255,255,0.06);
 }
 
+
+/* Estilos del acordeón */
+.accordion-item {
+    background-color: transparent;
+    border: 1px solid rgba(46, 70, 49, 0.2); /* Borde sutil basado en el color oscuro */
+    margin-bottom: 10px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.accordion-button {
+    background-color: white !important;
+    color: #2E4631; /* Color de texto oscuro del tema */
+    font-family: 'Space Grotesk', sans-serif; /* Fuente del navbar y botones */
+    font-weight: 700;
+    padding: 1rem 1.25rem;
+    box-shadow: none;
+    transition: background-color 0.3s;
+}
+.accordion-button:not(.collapsed) {
+    color: #D4AF37; /* Color de acento dorado cuando está activo */
+    background-color: #F2F0E4 !important; /* Fondo crema cuando está activo */
+    border-bottom: 3px solid #D4AF37;
+}
+.accordion-body {
+    background-color: #FFF;
+    color: #1A1F1B;
+    padding: 1.25rem;
+}
+
 .modal-content {
     background-color: #1A291E;
     border: 1px solid #D4AF37;
